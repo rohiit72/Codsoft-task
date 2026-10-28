@@ -1,0 +1,26 @@
+{
+  "name": "task1-student-records",
+  "version": "1.0.0",
+  "description": "Student Record Management API built with Express, Sequelize, and SQLite",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seed.js",
+    "test": "node --test tests/api.test.js"
+  },
+  "keywords": ["student-record-api", "express", "sequelize", "sqlite", "rest-api", "codsoft"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "morgan": "^1.10.0",
+    "sequelize": "^6.37.5",
+    "sqlite3": "^6.0.1",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  }
+}

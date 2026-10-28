@@ -1,0 +1,24 @@
+{
+  "name": "codsoft-backend-tasks",
+  "version": "1.0.0",
+  "description": "CodSoft Backend Development Internship Projects (Tasks 1, 2, and 3)",
+  "scripts": {
+    "start:task1": "npm --prefix task1-student-records start",
+    "start:task2": "npm --prefix task2-contact-management start",
+    "start:task3": "npm --prefix task3-todo-list start",
+    "dev:task1": "npm --prefix task1-student-records run dev",
+    "dev:task2": "npm --prefix task2-contact-management run dev",
+    "dev:task3": "npm --prefix task3-todo-list run dev",
+    "seed:task1": "npm --prefix task1-student-records run seed",
+    "seed:task2": "npm --prefix task2-contact-management run seed",
+    "seed:task3": "npm --prefix task3-todo-list run seed",
+    "seed:all": "npm run seed:task1 && npm run seed:task2 && npm run seed:task3",
+    "test:task1": "npm --prefix task1-student-records test",
+    "test:task2": "npm --prefix task2-contact-management test",
+    "test:task3": "npm --prefix task3-todo-list test",
+    "test:all": "npm run test:task1 && npm run test:task2 && npm run test:task3"
+  },
+  "keywords": ["codsoft", "backend-development", "student-records", "contact-management", "todo-api", "express", "sqlite"],
+  "author": "",
+  "license": "ISC"
+}

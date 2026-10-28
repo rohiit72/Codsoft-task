@@ -1,0 +1,224 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Student Record Management API",
+    "version": "1.0.0",
+    "description": "Comprehensive REST API for managing student records, course information, and enrollments."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5001",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/students": {
+      "post": {
+        "summary": "Create a new student",
+        "tags": ["Students"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StudentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Student created successfully" },
+          "400": { "description": "Validation error" },
+          "409": { "description": "Duplicate student email or ID" }
+        }
+      },
+      "get": {
+        "summary": "Get all students with search, filters, pagination, and sorting",
+        "tags": ["Students"],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "department", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["Active", "Inactive", "Graduated", "Suspended"] } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": {
+          "200": { "description": "List of students" }
+        }
+      }
+    },
+    "/api/students/{id}": {
+      "get": {
+        "summary": "Get student by ID with enrollments and courses",
+        "tags": ["Students"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Student details" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "put": {
+        "summary": "Update student information",
+        "tags": ["Students"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StudentInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Student updated successfully" },
+          "404": { "description": "Student not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete student by ID",
+        "tags": ["Students"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Student deleted successfully" },
+          "404": { "description": "Student not found" }
+        }
+      }
+    },
+    "/api/courses": {
+      "post": {
+        "summary": "Create a new course",
+        "tags": ["Courses"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CourseInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Course created" },
+          "409": { "description": "Course code already exists" }
+        }
+      },
+      "get": {
+        "summary": "Get courses with filtering and pagination",
+        "tags": ["Courses"],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "department", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "List of courses" } }
+      }
+    },
+    "/api/courses/{id}": {
+      "get": {
+        "summary": "Get course details by ID",
+        "tags": ["Courses"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Course details" }, "404": { "description": "Not found" } }
+      },
+      "put": {
+        "summary": "Update course details",
+        "tags": ["Courses"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Updated" } }
+      },
+      "delete": {
+        "summary": "Delete course",
+        "tags": ["Courses"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Deleted" } }
+      }
+    },
+    "/api/enrollments": {
+      "post": {
+        "summary": "Enroll a student into a course",
+        "tags": ["Enrollments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EnrollmentInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Enrollment successful" },
+          "400": { "description": "Course capacity reached or invalid input" },
+          "404": { "description": "Student or Course not found" },
+          "409": { "description": "Student is already enrolled in this course" }
+        }
+      },
+      "get": {
+        "summary": "Get all enrollments with student and course information",
+        "tags": ["Enrollments"],
+        "parameters": [
+          { "name": "studentId", "in": "query", "schema": { "type": "integer" } },
+          { "name": "courseId", "in": "query", "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["Enrolled", "Completed", "Dropped"] } }
+        ],
+        "responses": { "200": { "description": "List of enrollments" } }
+      }
+    },
+    "/api/enrollments/{id}": {
+      "put": {
+        "summary": "Update enrollment grade or status",
+        "tags": ["Enrollments"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Enrollment updated" } }
+      },
+      "delete": {
+        "summary": "Drop or delete enrollment",
+        "tags": ["Enrollments"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "Enrollment deleted" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StudentInput": {
+        "type": "object",
+        "required": ["studentIdNumber", "firstName", "lastName", "email", "dateOfBirth", "department", "enrollmentYear"],
+        "properties": {
+          "studentIdNumber": { "type": "string", "example": "STU1001" },
+          "firstName": { "type": "string", "example": "Alice" },
+          "lastName": { "type": "string", "example": "Smith" },
+          "email": { "type": "string", "format": "email", "example": "alice.smith@university.edu" },
+          "phone": { "type": "string", "example": "+1-555-0199" },
+          "dateOfBirth": { "type": "string", "format": "date", "example": "2003-05-15" },
+          "department": { "type": "string", "example": "Computer Science" },
+          "enrollmentYear": { "type": "integer", "example": 2023 },
+          "status": { "type": "string", "enum": ["Active", "Inactive", "Graduated", "Suspended"], "default": "Active" }
+        }
+      },
+      "CourseInput": {
+        "type": "object",
+        "required": ["courseCode", "title", "credits", "department", "instructor"],
+        "properties": {
+          "courseCode": { "type": "string", "example": "CS101" },
+          "title": { "type": "string", "example": "Introduction to Computer Science" },
+          "description": { "type": "string", "example": "Core fundamentals of algorithms and programming" },
+          "credits": { "type": "integer", "example": 4 },
+          "department": { "type": "string", "example": "Computer Science" },
+          "instructor": { "type": "string", "example": "Dr. Alan Turing" },
+          "maxCapacity": { "type": "integer", "example": 45 }
+        }
+      },
+      "EnrollmentInput": {
+        "type": "object",
+        "required": ["studentId", "courseId"],
+        "properties": {
+          "studentId": { "type": "integer", "example": 1 },
+          "courseId": { "type": "integer", "example": 1 },
+          "enrollmentDate": { "type": "string", "format": "date", "example": "2024-01-15" },
+          "grade": { "type": "string", "enum": ["A+", "A", "B+", "B", "C+", "C", "D", "F", "Pending"], "default": "Pending" },
+          "status": { "type": "string", "enum": ["Enrolled", "Completed", "Dropped"], "default": "Enrolled" }
+        }
+      }
+    }
+  }
+}

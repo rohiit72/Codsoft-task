@@ -1,0 +1,125 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Contact Management System API",
+    "version": "1.0.0",
+    "description": "Secure REST API to manage personal and professional contacts with address and company details, search, filtering, and duplicate prevention."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5002",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/contacts": {
+      "post": {
+        "summary": "Create a new contact",
+        "tags": ["Contacts"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Contact created successfully" },
+          "400": { "description": "Validation error" },
+          "409": { "description": "Duplicate contact email or phone number" }
+        }
+      },
+      "get": {
+        "summary": "Retrieve contacts with search, filter, sort, and pagination",
+        "tags": ["Contacts"],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 10 } },
+          { "name": "search", "in": "query", "description": "Search by name, email, phone, company", "schema": { "type": "string" } },
+          { "name": "category", "in": "query", "schema": { "type": "string", "enum": ["Personal", "Professional", "Family", "Other"] } },
+          { "name": "companyName", "in": "query", "schema": { "type": "string" } },
+          { "name": "city", "in": "query", "schema": { "type": "string" } },
+          { "name": "isFavorite", "in": "query", "schema": { "type": "boolean" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "default": "createdAt" } },
+          { "name": "sortOrder", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": {
+          "200": { "description": "List of contacts" }
+        }
+      }
+    },
+    "/api/contacts/stats": {
+      "get": {
+        "summary": "Get contact metrics and category breakdown",
+        "tags": ["Contacts"],
+        "responses": {
+          "200": { "description": "Contact statistics" }
+        }
+      }
+    },
+    "/api/contacts/{id}": {
+      "get": {
+        "summary": "Get contact by ID",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Contact found" },
+          "404": { "description": "Contact not found" }
+        }
+      },
+      "put": {
+        "summary": "Update contact details",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ContactInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Contact updated successfully" },
+          "404": { "description": "Contact not found" },
+          "409": { "description": "Email or phone conflict with another contact" }
+        }
+      },
+      "delete": {
+        "summary": "Delete contact by ID",
+        "tags": ["Contacts"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }],
+        "responses": {
+          "200": { "description": "Contact deleted successfully" },
+          "404": { "description": "Contact not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ContactInput": {
+        "type": "object",
+        "required": ["firstName", "lastName", "email", "phoneNumber"],
+        "properties": {
+          "firstName": { "type": "string", "example": "Sarah" },
+          "lastName": { "type": "string", "example": "Connor" },
+          "email": { "type": "string", "format": "email", "example": "sarah.connor@cyberdyne.com" },
+          "phoneNumber": { "type": "string", "example": "+1-555-8392" },
+          "street": { "type": "string", "example": "742 Evergreen Terrace" },
+          "city": { "type": "string", "example": "Springfield" },
+          "state": { "type": "string", "example": "OR" },
+          "postalCode": { "type": "string", "example": "97477" },
+          "country": { "type": "string", "example": "USA" },
+          "companyName": { "type": "string", "example": "Tech Corp" },
+          "jobTitle": { "type": "string", "example": "Senior DevOps Engineer" },
+          "department": { "type": "string", "example": "Infrastructure" },
+          "category": { "type": "string", "enum": ["Personal", "Professional", "Family", "Other"], "default": "Personal" },
+          "isFavorite": { "type": "boolean", "default": false },
+          "notes": { "type": "string", "example": "Met at DevSecOps summit 2024" }
+        }
+      }
+    }
+  }
+}
